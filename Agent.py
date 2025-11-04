@@ -99,9 +99,101 @@ class Agent:
         self.es_hub = True
     
     # Calculo de Probabilidades de transición ********************
-     
+    
+    def calcular_prob_propagacion(self, A_D: float, beta0: float, beta1: float) -> float:
+        """
+        Calcula P(S→D) = β0*s_i + β1*A_D(i)
+        
+        Args:
+            A_D: Suma ponderada de actividad de vecinos desinformados
+            beta0: Tasa de propagación a nivel de agente
+            beta1: Tasa de propagación a nivel de red
+            
+        Returns:
+            Probabilidad de transición S→D en [0,1]
+        """
+        if self.estado != EstadoAgente.SUSCEPTIBLE:
+            return 0.0
+        
+        prob = beta0 * self.susceptibilidad + beta1 * A_D
+        return min(prob, 1.0)  # Limitar a [0,1]
+    
+    def calcular_prob_correccion(self, A_S: float, gamma0: float, gamma1: float) -> float:
+        """
+        Calcula P(D→S) = γ0*(1-s_i) + γ1*A_S(i)
+        
+        Args:
+            A_S: Suma ponderada de actividad de vecinos susceptibles
+            gamma0: Tasa de corrección a nivel de agente
+            gamma1: Tasa de corrección a nivel de red
+            
+        Returns:
+            Probabilidad de transición D→S en [0,1]
+        """
+        if self.estado != EstadoAgente.DESINFORMADO:
+            return 0.0
+        
+        prob = gamma0 * (1 - self.susceptibilidad) + gamma1 * A_S
+        return min(prob, 1.0)
+    
+    def calcular_prob_decaimiento(self, viralidad: float, delta: float) -> float:
+        """
+        Calcula P([S,D]→N) = δ*(1-r_i)*(1-V(t))
+        
+        Args:
+            viralidad: V(t) = proporción de agentes activos
+            delta: Tasa de decaimiento de atención global
+            
+        Returns:
+            Probabilidad de transición a NO_INVOLUCRADO en [0,1]
+        """
+        if self.estado == EstadoAgente.NO_INVOLUCRADO:
+            return 0.0
+        
+        prob = delta * (1 - self.interes) * (1 - viralidad)
+        return min(prob, 1.0)
+    
+    def calcular_prob_involucramiento(self, viralidad: float, tendencia: float, 
+                                     eta: float) -> float:
+        """
+        Calcula P(N→S) = η*V(t)*T(t)
+        
+        Args:
+            viralidad: V(t) = proporción de agentes activos
+            tendencia: T(t) = e^(-λ(t-t0))
+            eta: Tasa de involucramiento global
+            
+        Returns:
+            Probabilidad de transición N→S en [0,1]
+        """
+        if self.estado != EstadoAgente.NO_INVOLUCRADO:
+            return 0.0
+        
+        prob = eta * viralidad * tendencia
+        return min(prob, 1.0)
+    
     # Metodos de transición de estado ********************
-   
+    
+    def intentar_transicion(self, probabilidad: float, nuevo_estado: EstadoAgente) -> bool:
+        """
+        Intenta realizar transición con probabilidad dada.
+        
+        Args:
+            probabilidad: Probabilidad de transición [0,1]
+            nuevo_estado: Estado al que transicionar
+            
+        Returns:
+            True si la transición ocurrió, False en caso contrario
+        """
+        if np.random.random() < probabilidad:
+            self.estado = nuevo_estado
+            return True
+        return False
+    
+    def cambiar_estado(self, nuevo_estado: EstadoAgente):
+        """Cambia el estado del agente directamente (sin probabilidad)"""
+        self.estado = nuevo_estado
+    
     # Metodos para obtener información del agente ********************
     
     # Printing Methods ********************
