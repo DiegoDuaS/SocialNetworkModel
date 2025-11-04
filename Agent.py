@@ -196,4 +196,71 @@ class Agent:
     
     # Metodos para obtener información del agente ********************
     
+    def obtener_actividad_efectiva(self) -> float:
+        """
+        Retorna actividad del agente.
+        Si está en estado NO_INVOLUCRADO, su actividad es 0.
+        
+        Returns:
+            Actividad efectiva del agente
+        """
+        if self.estado == EstadoAgente.NO_INVOLUCRADO:
+            return 0.0
+        return self.actividad
+    
+    def esta_activo(self) -> bool:
+        """
+        Verifica si el agente está activo en la red.
+        
+        Returns:
+            True si el agente NO está en estado NO_INVOLUCRADO
+        """
+        return self.estado != EstadoAgente.NO_INVOLUCRADO
+    
+    def es_susceptible(self) -> bool:
+        """Verifica si el agente está en estado SUSCEPTIBLE"""
+        return self.estado == EstadoAgente.SUSCEPTIBLE
+    
+    def es_desinformado(self) -> bool:
+        """Verifica si el agente está en estado DESINFORMADO"""
+        return self.estado == EstadoAgente.DESINFORMADO
+    
+    def es_no_involucrado(self) -> bool:
+        """Verifica si el agente está en estado NO_INVOLUCRADO"""
+        return self.estado == EstadoAgente.NO_INVOLUCRADO
+    
+    def obtener_info(self) -> Dict:
+        """
+        Retorna diccionario con información completa del agente.
+        
+        Returns:
+            Diccionario con todos los atributos del agente
+        """
+        return {
+            'id': self.id,
+            'estado': self.estado.value,
+            'tipo': self.tipo.value,
+            'susceptibilidad': self.susceptibilidad,
+            'actividad': self.actividad,
+            'interes': self.interes,
+            'es_super_propagador': self.es_super_propagador,
+            'es_hub': self.es_hub,
+            'edad': self.edad,
+            'genero': self.genero,
+            'orientacion_politica': self.orientacion_politica
+        }
+    
     # Printing Methods ********************
+    
+    def __repr__(self):
+        """Representación string del agente"""
+        return (f"Agent(id={self.id}, estado={self.estado.value}, "
+                f"tipo={self.tipo.value}, s={self.susceptibilidad:.2f}, "
+                f"a={self.actividad:.2f}, r={self.interes:.2f})")
+    
+    def __str__(self):
+        """String legible del agente"""
+        return (f"Agente #{self.id} [{self.estado.value}] - "
+                f"Tipo: {self.tipo.value.capitalize()}, "
+                f"Susceptibilidad: {self.susceptibilidad:.2f}, "
+                f"Actividad: {self.actividad:.2f}")
