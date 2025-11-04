@@ -28,18 +28,20 @@ class Simulation:
                 a.marcar_como_super_propagador()
             self.agents[n] = a
 
-    def seed_initial_desinfo(self, n_seed: int = 5, method: str = 'random'):
-        """Marca n_seed agentes como DESINFORMADO al inicio."""
+    def seed_initial_states(self, n_seed_desinfo=5, prop_no_involucrados=0.05):
+        # marcas para desinformados
         nodes = list(self.net.G.nodes())
-        if method == 'top_degree':
-            # ordenar por out-degree o in-degree (influencia)
-            grados = sorted(nodes, key=lambda x: self.net.G.degree(x), reverse=True)
-            seeds = grados[:n_seed]
-        else:
-            seeds = list(np.random.choice(nodes, size=n_seed, replace=False))
+        seeds = list(np.random.choice(nodes, size=n_seed_desinfo, replace=False))
         for s in seeds:
             self.agents[s].cambiar_estado(EstadoAgente.DESINFORMADO)
-        return seeds
+
+        # marcar No Involucrados
+        n_no = int(len(nodes) * prop_no_involucrados)
+        remaining = [n for n in nodes if n not in seeds]
+        if n_no > 0:
+            no_nodes = list(np.random.choice(remaining, size=n_no, replace=False))
+            for nn in no_nodes:
+                self.agents[nn].cambiar_estado(EstadoAgente.NO_INVOLUCRADO)
 
     def _compute_A_vectors(self):
         """
@@ -56,6 +58,13 @@ class Simulation:
             if agent.es_susceptible():
                 atributo_sus[nid] = act
         return atributo_desinfo, atributo_sus
+
+    def compute_viralidad_by_activity(self):
+        total_activity = sum(a.actividad for a in self.agents.values())
+        actives = sum(1 for a in self.agents.values() if a.esta_activo())
+        if total_activity <= 0:
+            return 0.0
+        return actives / len(self.agents)
 
     def tendencia_temporal(self, t: int, t0: int = 0, lambd: float = 0.0):
         """
@@ -76,6 +85,7 @@ class Simulation:
             eta: float = 0.03,
             lambd: float = 0.35,
             seed_desinfo: int = 5,
+            no_involucrados: int = 0.1,
             reinforcement: bool = True,
             reinforcement_rate: float = 0.02,
             verbose: bool = True):
@@ -90,11 +100,8 @@ class Simulation:
         if self.seed is not None:
             np.random.seed(self.seed)
 
-        # Semilla inicial
-        seeds = self.seed_initial_desinfo(n_seed=seed_desinfo)
-
-        for s in seeds:
-            self.agents[s].estado = 'D'
+        # Semilla inicial, estados de agentes aleatorios
+        self.seed_initial_states(n_seed_desinfo=seed_desinfo, prop_no_involucrados=no_involucrados)
 
         logs = []
         n = len(self.agents)
@@ -110,8 +117,7 @@ class Simulation:
                 A_S[nodo] = self.net.calcular_suma_ponderada_vecinos(nodo, atributo_sus)
 
             # 2) viralidad y tendencia
-            activos = sum(1 for a in self.agents.values() if a.esta_activo())
-            viralidad = activos / n
+            viralidad = self.compute_viralidad_by_activity()
             tendencia = self.tendencia_temporal(t, t0=0, lambd=lambd)
 
             # 3) Iterar agentes y aplicar reglas S->D, D->S, decaimiento, N->S
@@ -217,6 +223,8 @@ if __name__ == "__main__":
     df = sim.run(
         T=50,
         **params,
+        seed_desinfo=23,
+        no_involucrados=0.05,
         reinforcement=True,
         reinforcement_rate=0.01
     )
