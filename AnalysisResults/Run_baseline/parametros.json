@@ -1,0 +1,25 @@
+{
+  "run_id": "baseline",
+  "parametros_red": {
+    "n_nodos": 400,
+    "k_vecinos": 6,
+    "p_rewire": 0.2,
+    "m_hubs": 3,
+    "proporcion_hubs": 0.08,
+    "seed": 42
+  },
+  "parametros_simulacion": {
+    "T": 250,
+    "beta0": 0.1,
+    "beta1": 0.4,
+    "gamma0": 0.22,
+    "gamma1": 0.03,
+    "delta": 0.1,
+    "eta": 0.06,
+    "lambd": 0.35,
+    "seed_desinfo": 5,
+    "no_involucrados": 0.1,
+    "reinforcement": true,
+    "reinforcement_rate": 0.02
+  }
+}

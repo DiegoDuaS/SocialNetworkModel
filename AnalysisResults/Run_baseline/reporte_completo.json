@@ -1,0 +1,113 @@
+{
+  "timestamp": "2025-11-08 18:14:32",
+  "parametros_simulacion": {},
+  "metricas_epidemiologicas": {
+    "R0_estimado": 1.164671681206121,
+    "tiempo_al_pico": 22,
+    "prevalencia_maxima": 0.4225,
+    "tasa_max_crecimiento": 18.0,
+    "tasa_crecimiento_exponencial": 0.16467168120612116,
+    "tiempo_duplicacion": 4.20926764992656,
+    "auc_desinformados": 17426.5,
+    "tasa_ataque_final": 0.9875,
+    "duracion_epidemia": 246,
+    "velocidad_propagacion": 0.019204545454545453,
+    "desinformados_finales": 12,
+    "susceptibles_finales": 5,
+    "no_involucrados_finales": 383
+  },
+  "analisis_agentes": {
+    "n_agentes_total": 400,
+    "distribucion_tipos": {
+      "credulo": {
+        "n_agentes": 134,
+        "proporcion": 0.335,
+        "susceptibilidad_media": 0.7064781493655885,
+        "actividad_media": 1.609594252888776,
+        "interes_medio": 0.670027440813689,
+        "desinformados": 9,
+        "tasa_desinformacion": 0.06716417910447761
+      },
+      "esceptico": {
+        "n_agentes": 172,
+        "proporcion": 0.43,
+        "susceptibilidad_media": 0.5740505526929234,
+        "actividad_media": 1.4197555954191974,
+        "interes_medio": 0.515201625936315,
+        "desinformados": 0,
+        "tasa_desinformacion": 0.0
+      },
+      "verificador": {
+        "n_agentes": 94,
+        "proporcion": 0.235,
+        "susceptibilidad_media": 0.5678957218789008,
+        "actividad_media": 2.308827985483595,
+        "interes_medio": 0.7031133910557724,
+        "desinformados": 3,
+        "tasa_desinformacion": 0.031914893617021274
+      }
+    },
+    "distribucion_estados": {
+      "S": {
+        "n_agentes": 5,
+        "proporcion": 0.0125,
+        "susceptibilidad_media": 0.49854174775306176,
+        "actividad_media": 2.6056737714597356
+      },
+      "D": {
+        "n_agentes": 12,
+        "proporcion": 0.03,
+        "susceptibilidad_media": 0.7555903694283429,
+        "actividad_media": 3.210042558848205
+      },
+      "N": {
+        "n_agentes": 383,
+        "proporcion": 0.9575,
+        "susceptibilidad_media": 0.6141701612607909,
+        "actividad_media": 1.6328055962693964
+      }
+    },
+    "caracteristicas_globales": {
+      "susceptibilidad_media": 0.6169674123369709,
+      "susceptibilidad_std": 0.2225123592491475,
+      "actividad_media": 1.6922835573366402,
+      "actividad_std": 1.4933357021046414,
+      "interes_medio": 0.6112275387233077,
+      "interes_std": 0.19372687399863203
+    },
+    "super_propagadores": {
+      "n_super_props": 32,
+      "proporcion": 0.08,
+      "desinformados": 1,
+      "actividad_media": 3.8387046314103603
+    },
+    "hubs": {
+      "n_hubs": 32,
+      "proporcion": 0.08,
+      "desinformados": 1
+    }
+  },
+  "analisis_red": {
+    "n_nodos": 400,
+    "n_aristas": 3765,
+    "densidad": 0.023590225563909776,
+    "grado_in_promedio": 9.4125,
+    "grado_out_promedio": 9.4125,
+    "grado_in_max": 75,
+    "grado_out_max": 21,
+    "coeficiente_clustering": 0.2499991708012713,
+    "n_super_propagadores": 32,
+    "n_hubs": 32,
+    "camino_promedio": 2.479749373433584,
+    "centralidades": {
+      "degree_media": 0.047180451127819545,
+      "degree_max": 0.22556390977443608,
+      "betweenness_media": 0.0054579287414516205,
+      "betweenness_max": 0.06265248169568412,
+      "closeness_media": 0.32615222294489193
+    },
+    "asortatividad": 0.07070468969169713,
+    "n_comunidades": 13,
+    "modularidad": 0.2670562719257132
+  }
+}
