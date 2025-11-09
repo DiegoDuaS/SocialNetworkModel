@@ -29,9 +29,9 @@ class Agent:
             tipo: Tipo de agente (CREDULO, ESCEPTICO, VERIFICADOR)
             seed: Semilla para reproducibilidad (opcional)
         """
-        if seed is not None:
-            np.random.seed(seed)
-            
+        # RNG propio del agente (reproducible pero distinto por agente)
+        # XOR con el id para que cada agente tenga una sub-semilla diferente
+        self.rng = np.random.default_rng(seed ^ id_agente if seed is not None else None)
         # Identificación
         self.id = id_agente
         self.estado = EstadoAgente.SUSCEPTIBLE
@@ -60,9 +60,10 @@ class Agent:
         """
         Asigna un tipo de agente aleatoriamente.  40% crédulos, 40% escépticos, 20% verificadores
         """
-        tipos = [TipoAgente.CREDULO, TipoAgente.ESCEPTICO, TipoAgente.VERIFICADOR]
-        probabilidades = [0.4, 0.4, 0.2]
-        return np.random.choice(tipos, p=probabilidades)
+        return self.rng.choice(
+            [TipoAgente.CREDULO, TipoAgente.ESCEPTICO, TipoAgente.VERIFICADOR],
+            p=[0.4, 0.4, 0.2]
+        )
     
     def _inicializar_caracteristicas(self):
         """
@@ -70,21 +71,21 @@ class Agent:
         """
         if self.tipo == TipoAgente.CREDULO:
             # Alta susceptibilidad
-            self.susceptibilidad = np.random.beta(5, 2)  # Sesgado alto
-            self.actividad = np.random.lognormal(0, 0.8)
-            self.interes = np.random.beta(4, 2)
+            self.susceptibilidad = float(self.rng.beta(3, 4))
+            self.actividad = float(self.rng.lognormal(0, 0.8))
+            self.interes = float(self.rng.beta(4, 2))
             
         elif self.tipo == TipoAgente.ESCEPTICO:
             # Baja susceptibilidad
-            self.susceptibilidad = np.random.beta(2, 5)  # Sesgado bajo
-            self.actividad = np.random.lognormal(0, 0.5)
-            self.interes = np.random.beta(3, 3)
+            self.susceptibilidad = float(self.rng.beta(2, 8))  # Sesgado bajo
+            self.actividad = float(self.rng.lognormal(0, 0.5))
+            self.interes = float(self.rng.beta(3, 3))
             
         elif self.tipo == TipoAgente.VERIFICADOR:
             # Muy baja susceptibilidad, verifica info
-            self.susceptibilidad = np.random.beta(1, 8)  # Muy bajo
-            self.actividad = np.random.lognormal(0.5, 0.6)  # Más activo
-            self.interes = np.random.beta(5, 2)
+            self.susceptibilidad = float(self.rng.beta(1, 8))  # Muy bajo
+            self.actividad = float(self.rng.lognormal(0.5, 0.6))  # Más activo
+            self.interes = float(self.rng.beta(5, 2))
     
     def marcar_como_super_propagador(self):
         """
@@ -92,7 +93,7 @@ class Agent:
         """
         self.es_super_propagador = True
         # Multiplicar actividad
-        self.actividad *= np.random.uniform(2, 5)
+        self.actividad *= float(self.rng.uniform(2, 5))
     
     def marcar_como_hub(self):
         """Marca al agente como hub de la red"""
@@ -185,7 +186,7 @@ class Agent:
         Returns:
             True si la transición ocurrió, False en caso contrario
         """
-        if np.random.random() < probabilidad:
+        if self.rng.random() < probabilidad:
             self.estado = nuevo_estado
             return True
         return False
